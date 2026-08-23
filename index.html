@@ -440,7 +440,7 @@ body {
     <div class="total-score-card" id="totalScoreCard">
       <div class="total-score-label">加权总分</div>
       <div class="total-score-value" id="totalScore">—</div>
-      <div style="font-size:13px;color:var(--text-muted);">满分 100 分</div>
+      <div style="font-size:13px;color:var(--text-muted);" id="scoreHint">满分 100 分</div>
       <div id="totalLevel"></div>
     </div>
 
@@ -776,23 +776,26 @@ function renderResults(results, totalWeighted, totalWeight) {
   const hasAny = results.some(r => r.score !== null || r.displayScore !== null);
   section.classList.toggle('visible', hasAny);
 
-  const totalScore = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : null;
+  const totalScore = totalWeight > 0 ? totalWeighted : null;
   const displayTotal = totalScore !== null ? totalScore.toFixed(1) : '—';
+  const ratio = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : null;
 
   document.getElementById('totalScore').textContent = displayTotal;
+  const hintEl = document.getElementById('scoreHint');
+  hintEl.textContent = totalWeight === 100 ? '满分 100 分' : '已计算权重 ' + totalWeight + '%';
   const totalScoreEl = document.getElementById('totalScore');
-  totalScoreEl.classList.toggle('warn', totalScore !== null && totalScore < 80);
+  totalScoreEl.classList.toggle('warn', ratio !== null && ratio < 80);
 
   const totalCard = document.getElementById('totalScoreCard');
   totalCard.classList.remove('excellent', 'good', 'pass', 'fail');
   const levelDiv = document.getElementById('totalLevel');
   levelDiv.innerHTML = '';
 
-  if (totalScore !== null) {
+  if (ratio !== null) {
     let levelClass, levelText;
-    if (totalScore >= 90) { levelClass = 'level-excellent'; levelText = '优秀'; totalCard.classList.add('excellent'); }
-    else if (totalScore >= 80) { levelClass = 'level-good'; levelText = '良好'; totalCard.classList.add('good'); }
-    else if (totalScore >= 60) { levelClass = 'level-pass'; levelText = '及格'; totalCard.classList.add('pass'); }
+    if (ratio >= 90) { levelClass = 'level-excellent'; levelText = '优秀'; totalCard.classList.add('excellent'); }
+    else if (ratio >= 80) { levelClass = 'level-good'; levelText = '良好'; totalCard.classList.add('good'); }
+    else if (ratio >= 60) { levelClass = 'level-pass'; levelText = '及格'; totalCard.classList.add('pass'); }
     else { levelClass = 'level-fail'; levelText = '不及格'; totalCard.classList.add('fail'); }
     levelDiv.innerHTML = `<span class="total-score-level ${levelClass}">${levelText}</span>`;
   }
