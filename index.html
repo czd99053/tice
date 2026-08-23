@@ -729,7 +729,7 @@ function calculate() {
 
       const displayScore = score !== null ? score + bonus : null;
       const w = weights[key] / 100;
-      const weighted = displayScore !== null ? displayScore * w : null;
+      const weighted = score !== null ? score * w : null;
 
       results.push({
         key: key,
@@ -746,6 +746,8 @@ function calculate() {
 
       if (weighted !== null) {
         totalWeighted += weighted;
+        if (bonus > 0) totalWeighted += bonus;
+      }
       }
       totalWeight += weights[key];
     } else {
@@ -799,11 +801,13 @@ function renderResults(results, totalWeighted, totalWeight) {
     const color = r.isBmi ? '#6366f1' : ITEM_COLORS[r.key === 'bmi' ? 0 : ITEM_KEYS.indexOf(r.key)];
     const dot = `<span class="dot" style="background:${color};"></span>`;
     const valDisplay = r.value != null ? r.value : '<span class="missing">未输入</span>';
-    const scoreDisplay = r.displayScore != null ? r.displayScore.toFixed(1) : (r.score != null ? r.score.toFixed(1) : '<span class="missing">—</span>');
-    const weightedDisplay = r.weighted != null ? r.weighted.toFixed(1) : '<span class="missing">—</span>';
-    const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${r.bonus}</span>` : '';
+    const scoreDisplay = r.score != null ? r.score.toFixed(1) : '<span class="missing">—</span>';
+    const weightedRaw = r.weighted != null ? r.weighted : 0;
+    const weightedDisplay = r.weighted != null ? (weightedRaw + r.bonus).toFixed(1) : '<span class="missing">—</span>';
+    const bonusRaw = r.bonus > 0 ? r.bonus * 10 : 0;
+    const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${bonusRaw.toFixed(0)}</span>` : '';
     const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${r.level}</span>` : '';
-    const actualScore = r.displayScore != null ? r.displayScore : r.score;
+    const actualScore = r.score != null ? r.score : r.displayScore;
     const scoreWarn = actualScore != null && actualScore < 80 ? ' warn' : '';
 
     return `<tr${scoreWarn ? ' class="row-warn"' : ''}>
