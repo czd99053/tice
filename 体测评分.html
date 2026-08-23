@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长春市六年级体能测试评分系统</title>
+<style>
+:root {
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #a0aec0;
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --primary-dark: #1d4ed8;
+  --success: #059669;
+  --success-light: #d1fae5;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --border: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.header {
+  text-align: center;
+  padding: 32px 0 16px;
+}
+.header .badge {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.header .subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* gender select */
+.gender-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.gender-card {
+  position: relative;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow);
+}
+.gender-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.gender-card.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+.gender-card .icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+  display: block;
+}
+.gender-card .label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.gender-card .check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.gender-card.active .check { display: flex; }
+
+/* card */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.card-header .card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.card-header .card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.card-header .card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* inputs */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.input-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.input-group label .required {
+  color: var(--danger);
+  font-size: 10px;
+}
+.input-group input {
+  height: 42px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  font-size: 15px;
+  font-family: var(--font);
+  transition: all var(--transition);
+  background: #f8fafc;
+  width: 100%;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  background: #fff;
+}
+.input-group input::placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.input-group .unit {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* bmi mode toggle */
+.bmi-mode {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  background: #f1f5f9;
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+}
+.bmi-mode button {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all var(--transition);
+  font-family: var(--font);
+}
+.bmi-mode button.active {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: var(--shadow);
+  font-weight: 600;
+}
+
+/* result */
+.result-section {
+  display: none;
+}
+.result-section.visible {
+  display: block;
+}
+.total-score-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.total-score-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+.total-score-card.excellent::before { background: linear-gradient(90deg, #059669, #10b981); }
+.total-score-card.good::before { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+.total-score-card.pass::before { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.total-score-card.fail::before { background: linear-gradient(90deg, #dc2626, #ef4444); }
+.total-score-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.total-score-value {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.total-score-value.warn { color: #dc2626; }
+.total-score-level {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 16px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+.level-excellent { background: var(--success-light); color: var(--success); }
+.level-good { background: var(--primary-light); color: var(--primary-dark); }
+.level-pass { background: var(--warning-light); color: var(--warning); }
+.level-fail { background: var(--danger-light); color: var(--danger); }
+
+/* detail table */
+.detail-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+.detail-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+  background: #f8fafc;
+}
+.detail-table th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.detail-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+.detail-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.detail-table tr:last-child td { border-bottom: none; }
+.detail-table tr:hover td { background: #f8fafc; }
+.detail-table tr.row-warn td { color: #dc2626; }
+.detail-table tr.row-warn:hover td { background: #fef2f2; }
+.detail-table .item-name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-table .item-name .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.detail-table .score-val {
+  font-weight: 700;
+  font-size: 16px;
+}
+.detail-table .score-val.warn { color: #dc2626; }
+.detail-table .weighted-val {
+  font-weight: 600;
+  color: var(--primary);
+}
+.detail-table tr.row-warn .weighted-val { color: #dc2626; }
+.detail-table .item-unit {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.detail-table .bonus-badge {
+  font-size: 11px;
+  background: var(--success-light);
+  color: var(--success);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+.detail-table .missing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.detail-table tfoot td {
+  font-weight: 700;
+  font-size: 15px;
+  border-top: 2px solid var(--text);
+  background: #f8fafc;
+}
+.detail-table tfoot td:first-child { border-radius: 0 0 0 var(--radius-sm); }
+.detail-table tfoot td:last-child { border-radius: 0 0 var(--radius-sm) 0; }
+
+/* responsive */
+@media (max-width: 640px) {
+  .container { padding: 12px 10px 32px; }
+  .header h1 { font-size: 22px; }
+  .input-grid { grid-template-columns: 1fr 1fr; }
+  .total-score-value { font-size: 42px; }
+  .card { padding: 16px; }
+  .detail-table { font-size: 12px; }
+  .detail-table th, .detail-table td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">长春市 · 六年级</div>
+    <h1>体能测试评分系统</h1>
+    <p class="subtitle">输入体测数据，自动计算各项得分与加权总分</p>
+  </div>
+
+  <div class="gender-select" id="genderSelect">
+    <div class="gender-card" data-gender="male" onclick="selectGender('male')">
+      <span class="check">✓</span>
+      <span class="icon">👦</span>
+      <span class="label">男生</span>
+    </div>
+    <div class="gender-card" data-gender="female" onclick="selectGender('female')">
+      <span class="check">✓</span>
+      <span class="icon">👧</span>
+      <span class="label">女生</span>
+    </div>
+  </div>
+
+  <div class="card" id="bmiCard" style="display:none">
+    <div class="card-header">
+      <div class="card-icon" style="background:#dbeafe;color:#2563eb;">📊</div>
+      <div class="card-title">体重指数（BMI）<span style="font-size:12px;color:var(--text-muted);font-weight:400;"> — 权重 15%</span></div>
+    </div>
+    <div class="bmi-mode" id="bmiMode">
+      <button class="active" onclick="setBmiMode('calc')">身高体重计算</button>
+      <button onclick="setBmiMode('direct')">直接输入BMI</button>
+    </div>
+    <div class="input-grid" id="bmiCalcInputs">
+      <div class="input-group">
+        <label>身高 <span class="unit">（厘米）</span></label>
+        <input type="number" id="height" placeholder="如 150" step="0.1" oninput="calculate()">
+      </div>
+      <div class="input-group">
+        <label>体重 <span class="unit">（千克）</span></label>
+        <input type="number" id="weight" placeholder="如 40" step="0.1" oninput="calculate()">
+      </div>
+      <div class="input-group">
+        <label>BMI 值 <span class="unit">（自动计算）</span></label>
+        <input type="text" id="bmiCalc" readonly placeholder="—" style="color:var(--primary);font-weight:600;">
+      </div>
+    </div>
+    <div class="input-grid" id="bmiDirectInput" style="display:none">
+      <div class="input-group">
+        <label>BMI 值</label>
+        <input type="number" id="bmiDirect" placeholder="如 18.5" step="0.1" oninput="calculate()">
+      </div>
+    </div>
+  </div>
+
+  <div id="itemsContainer" style="display:none"></div>
+
+  <div class="result-section" id="resultSection">
+    <div class="total-score-card" id="totalScoreCard">
+      <div class="total-score-label">加权总分</div>
+      <div class="total-score-value" id="totalScore">—</div>
+      <div style="font-size:13px;color:var(--text-muted);">满分 100 分</div>
+      <div id="totalLevel"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#fef3c7;color:#d97706;">📋</div>
+        <div class="card-title">得分明细</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>测试项目</th>
+              <th>输入值</th>
+              <th>单项得分</th>
+              <th>权重</th>
+              <th>加权得分</th>
+            </tr>
+          </thead>
+          <tbody id="detailBody"></tbody>
+          <tfoot>
+            <tr>
+              <td>合计</td>
+              <td></td>
+              <td></td>
+              <td id="footerWeight">—</td>
+              <td id="footerTotal">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:16px 0 8px;color:var(--text-muted);font-size:12px;">
+    by czd
+  </div>
+</div>
+
+<script>
+const EMBEDDED_CONFIG = {"version":"1.0","description":"长春市六年级体能测试评分标准","totalScore":100,"weights":{"bmi":15,"vitalCapacity":15,"run50m":20,"sitAndReach":10,"ropeSkip":10,"sitUp":20,"run50x8":10},"levels":[{"score":100,"label":"优秀"},{"score":95,"label":"优秀"},{"score":90,"label":"优秀"},{"score":85,"label":"良好"},{"score":80,"label":"良好"},{"score":78,"label":"及格"},{"score":76,"label":"及格"},{"score":74,"label":"及格"},{"score":72,"label":"及格"},{"score":70,"label":"及格"},{"score":68,"label":"及格"},{"score":66,"label":"及格"},{"score":64,"label":"及格"},{"score":62,"label":"及格"},{"score":60,"label":"及格"},{"score":50,"label":"不及格"},{"score":40,"label":"不及格"},{"score":30,"label":"不及格"},{"score":20,"label":"不及格"},{"score":10,"label":"不及格"},{"score":0,"label":"不及格"}],"bonus":{"ropeSkip":{"perScore":1,"perCount":2,"maxBonus":20}},"genders":{"male":{"label":"男生","bmi":{"type":"range","ranges":[{"min":14.7,"max":21.8,"level":"正常","score":100},{"min":0,"max":14.6,"level":"低体重","score":80},{"min":21.9,"max":24.5,"level":"超重","score":80},{"min":24.6,"max":999,"level":"肥胖","score":60}]},"items":{"run50m":{"name":"50米跑","unit":"秒","reverse":true,"scores":[{"score":100,"value":8.2},{"score":95,"value":8.3},{"score":90,"value":8.4},{"score":85,"value":8.5},{"score":80,"value":8.6},{"score":78,"value":8.8},{"score":76,"value":9},{"score":74,"value":9.2},{"score":72,"value":9.4},{"score":70,"value":9.6},{"score":68,"value":9.8},{"score":66,"value":10},{"score":64,"value":10.2},{"score":62,"value":10.4},{"score":60,"value":10.6},{"score":50,"value":10.8},{"score":40,"value":11},{"score":30,"value":11.2},{"score":20,"value":11.4},{"score":10,"value":11.6},{"score":0,"value":20}]},"sitAndReach":{"name":"坐位体前屈","unit":"厘米","reverse":false,"scores":[{"score":100,"value":16.6},{"score":95,"value":15.3},{"score":90,"value":14},{"score":85,"value":11.5},{"score":80,"value":9},{"score":78,"value":7.7},{"score":76,"value":6.4},{"score":74,"value":5.1},{"score":72,"value":3.8},{"score":70,"value":2.5},{"score":68,"value":1.2},{"score":66,"value":-0.1},{"score":64,"value":-1.4},{"score":62,"value":-2.7},{"score":60,"value":-4},{"score":50,"value":-5},{"score":40,"value":-6},{"score":30,"value":-7},{"score":20,"value":-8},{"score":10,"value":-9},{"score":0,"value":-30}]},"ropeSkip":{"name":"1分钟跳绳","unit":"次","reverse":false,"scores":[{"score":100,"value":157},{"score":95,"value":152},{"score":90,"value":147},{"score":85,"value":141},{"score":80,"value":135},{"score":78,"value":128},{"score":76,"value":121},{"score":74,"value":114},{"score":72,"value":107},{"score":70,"value":100},{"score":68,"value":93},{"score":66,"value":86},{"score":64,"value":79},{"score":62,"value":72},{"score":60,"value":65},{"score":50,"value":62},{"score":40,"value":59},{"score":30,"value":56},{"score":20,"value":53},{"score":10,"value":50},{"score":0,"value":0}]},"vitalCapacity":{"name":"肺活量","unit":"毫升","reverse":false,"scores":[{"score":100,"value":3200},{"score":95,"value":3100},{"score":90,"value":3000},{"score":85,"value":2750},{"score":80,"value":2500},{"score":78,"value":2400},{"score":76,"value":2300},{"score":74,"value":2200},{"score":72,"value":2100},{"score":70,"value":2000},{"score":68,"value":1900},{"score":66,"value":1800},{"score":64,"value":1700},{"score":62,"value":1600},{"score":60,"value":1500},{"score":50,"value":1410},{"score":40,"value":1320},{"score":30,"value":1230},{"score":20,"value":1140},{"score":10,"value":1050},{"score":0,"value":0}]},"sitUp":{"name":"1分钟仰卧起坐","unit":"次","reverse":false,"scores":[{"score":100,"value":51},{"score":95,"value":48},{"score":90,"value":45},{"score":85,"value":42},{"score":80,"value":39},{"score":78,"value":37},{"score":76,"value":35},{"score":74,"value":33},{"score":72,"value":31},{"score":70,"value":29},{"score":68,"value":27},{"score":66,"value":25},{"score":64,"value":23},{"score":62,"value":21},{"score":60,"value":19},{"score":50,"value":17},{"score":40,"value":15},{"score":30,"value":13},{"score":20,"value":11},{"score":10,"value":9},{"score":0,"value":0}]},"run50x8":{"name":"50米×8往返跑","unit":"秒","reverse":true,"scores":[{"score":100,"value":90},{"score":95,"value":93},{"score":90,"value":96},{"score":85,"value":99},{"score":80,"value":102},{"score":78,"value":105},{"score":76,"value":108},{"score":74,"value":111},{"score":72,"value":114},{"score":70,"value":117},{"score":68,"value":120},{"score":66,"value":123},{"score":64,"value":126},{"score":62,"value":129},{"score":60,"value":132},{"score":50,"value":136},{"score":40,"value":140},{"score":30,"value":144},{"score":20,"value":148},{"score":10,"value":152},{"score":0,"value":240}]}}},"female":{"label":"女生","bmi":{"type":"range","ranges":[{"min":14.2,"max":20.8,"level":"正常","score":100},{"min":0,"max":14.1,"level":"低体重","score":80},{"min":20.9,"max":23.6,"level":"超重","score":80},{"min":23.7,"max":999,"level":"肥胖","score":60}]},"items":{"run50m":{"name":"50米跑","unit":"秒","reverse":true,"scores":[{"score":100,"value":8.2},{"score":95,"value":8.3},{"score":90,"value":8.4},{"score":85,"value":8.7},{"score":80,"value":9},{"score":78,"value":9.2},{"score":76,"value":9.4},{"score":74,"value":9.6},{"score":72,"value":9.8},{"score":70,"value":10},{"score":68,"value":10.2},{"score":66,"value":10.4},{"score":64,"value":10.6},{"score":62,"value":10.8},{"score":60,"value":11},{"score":50,"value":11.2},{"score":40,"value":11.4},{"score":30,"value":11.6},{"score":20,"value":11.8},{"score":10,"value":12},{"score":0,"value":20}]},"sitAndReach":{"name":"坐位体前屈","unit":"厘米","reverse":false,"scores":[{"score":100,"value":19.9},{"score":95,"value":18.7},{"score":90,"value":17.5},{"score":85,"value":15.2},{"score":80,"value":12.9},{"score":78,"value":11.8},{"score":76,"value":10.7},{"score":74,"value":9.6},{"score":72,"value":8.5},{"score":70,"value":7.4},{"score":68,"value":6.3},{"score":66,"value":5.2},{"score":64,"value":4.1},{"score":62,"value":3},{"score":60,"value":1.9},{"score":50,"value":1.1},{"score":40,"value":0.3},{"score":30,"value":-0.5},{"score":20,"value":-1.3},{"score":10,"value":-2.1},{"score":0,"value":-30}]},"ropeSkip":{"name":"1分钟跳绳","unit":"次","reverse":false,"scores":[{"score":100,"value":166},{"score":95,"value":159},{"score":90,"value":152},{"score":85,"value":144},{"score":80,"value":136},{"score":78,"value":129},{"score":76,"value":122},{"score":74,"value":115},{"score":72,"value":108},{"score":70,"value":101},{"score":68,"value":94},{"score":66,"value":87},{"score":64,"value":80},{"score":62,"value":73},{"score":60,"value":66},{"score":50,"value":63},{"score":40,"value":60},{"score":30,"value":57},{"score":20,"value":54},{"score":10,"value":51},{"score":0,"value":0}]},"vitalCapacity":{"name":"肺活量","unit":"毫升","reverse":false,"scores":[{"score":100,"value":2500},{"score":95,"value":2400},{"score":90,"value":2300},{"score":85,"value":2200},{"score":80,"value":2100},{"score":78,"value":2010},{"score":76,"value":1920},{"score":74,"value":1830},{"score":72,"value":1740},{"score":70,"value":1650},{"score":68,"value":1560},{"score":66,"value":1470},{"score":64,"value":1380},{"score":62,"value":1290},{"score":60,"value":1200},{"score":50,"value":1170},{"score":40,"value":1140},{"score":30,"value":1110},{"score":20,"value":1080},{"score":10,"value":1050},{"score":0,"value":0}]},"sitUp":{"name":"1分钟仰卧起坐","unit":"次","reverse":false,"scores":[{"score":100,"value":49},{"score":95,"value":47},{"score":90,"value":45},{"score":85,"value":42},{"score":80,"value":39},{"score":78,"value":37},{"score":76,"value":35},{"score":74,"value":33},{"score":72,"value":31},{"score":70,"value":29},{"score":68,"value":27},{"score":66,"value":25},{"score":64,"value":23},{"score":62,"value":21},{"score":60,"value":19},{"score":50,"value":17},{"score":40,"value":15},{"score":30,"value":13},{"score":20,"value":11},{"score":10,"value":9},{"score":0,"value":0}]},"run50x8":{"name":"50米×8往返跑","unit":"秒","reverse":true,"scores":[{"score":100,"value":97},{"score":95,"value":100},{"score":90,"value":103},{"score":85,"value":106},{"score":80,"value":109},{"score":78,"value":112},{"score":76,"value":115},{"score":74,"value":118},{"score":72,"value":121},{"score":70,"value":124},{"score":68,"value":127},{"score":66,"value":130},{"score":64,"value":133},{"score":62,"value":136},{"score":60,"value":139},{"score":50,"value":143},{"score":40,"value":147},{"score":30,"value":151},{"score":20,"value":155},{"score":10,"value":159},{"score":0,"value":240}]}}}}};
+let CONFIG = EMBEDDED_CONFIG;
+let currentGender = null;
+let bmiMode = 'calc';
+
+const ITEM_KEYS = ['run50m', 'sitAndReach', 'ropeSkip', 'vitalCapacity', 'sitUp', 'run50x8'];
+const ITEM_IDS = {
+  run50m: 'run50m',
+  sitAndReach: 'sitAndReach',
+  ropeSkip: 'ropeSkip',
+  vitalCapacity: 'vitalCapacity',
+  sitUp: 'sitUp',
+  run50x8: 'run50x8'
+};
+
+const ITEM_COLORS = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444'];
+
+async function init() {
+  try {
+    const res = await fetch('config.json');
+    if (res.ok) CONFIG = await res.json();
+  } catch(e) {}
+  buildItemInputs();
+}
+
+function buildItemInputs() {
+  const container = document.getElementById('itemsContainer');
+  const maleItems = CONFIG.genders.male.items;
+  let html = '';
+  ITEM_KEYS.forEach((key, i) => {
+    const item = maleItems[key];
+    const color = ITEM_COLORS[i];
+    const weight = CONFIG.weights[key];
+    html += `<div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:${color}18;color:${color};">${i+1}</div>
+        <div class="card-title">${item.name}<span style="font-size:12px;color:var(--text-muted);font-weight:400;"> — 权重 ${weight}%</span></div>
+        <div class="card-desc">${item.unit}</div>
+      </div>
+      ${key === 'run50x8' ? `
+      <div class="input-group" style="flex-direction:row;align-items:center;gap:8px;">
+        <input type="number" id="input_run50x8_min" placeholder="分" step="1" value="1" oninput="calculate()" style="width:80px;">
+        <span style="color:var(--text-muted);font-size:14px;">分</span>
+        <input type="number" id="input_run50x8_sec" placeholder="秒" step="0.1" oninput="calculate()" style="flex:1;">
+        <span style="color:var(--text-muted);font-size:14px;">秒</span>
+      </div>
+      <span class="unit" style="margin-top:4px;">单位：${item.unit}（越小越好）</span>
+      ` : `
+      <div class="input-group">
+        <input type="number" id="input_${key}" placeholder="输入${item.name}成绩" step="0.1" oninput="calculate()">
+        <span class="unit">单位：${item.unit}${item.reverse ? '（越小越好）' : '（越大越好）'}</span>
+      </div>
+      `}
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function selectGender(gender) {
+  currentGender = gender;
+  document.querySelectorAll('.gender-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-gender="${gender}"]`).classList.add('active');
+  document.getElementById('bmiCard').style.display = 'block';
+  document.getElementById('itemsContainer').style.display = 'block';
+  updateItemLabels();
+  calculate();
+}
+
+function updateItemLabels() {
+  if (!currentGender || !CONFIG) return;
+  const items = CONFIG.genders[currentGender].items;
+  ITEM_KEYS.forEach(key => {
+    const el = document.getElementById('input_' + key);
+    if (el) el.placeholder = '输入' + items[key].name + '成绩';
+  });
+}
+
+function setBmiMode(mode) {
+  bmiMode = mode;
+  document.querySelectorAll('#bmiMode button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`#bmiMode button${mode === 'calc' ? ':first-child' : ':last-child'}`).classList.add('active');
+  document.getElementById('bmiCalcInputs').style.display = mode === 'calc' ? '' : 'none';
+  document.getElementById('bmiDirectInput').style.display = mode === 'direct' ? '' : 'none';
+  if (mode === 'direct') {
+    document.getElementById('height').value = '';
+    document.getElementById('weight').value = '';
+    document.getElementById('bmiCalc').value = '';
+  } else {
+    document.getElementById('bmiDirect').value = '';
+  }
+  calculate();
+}
+
+function getBmiValue() {
+  if (bmiMode === 'calc') {
+    const h = parseFloat(document.getElementById('height').value);
+    const w = parseFloat(document.getElementById('weight').value);
+    if (h && w && h > 0) {
+      const bmi = w / ((h / 100) ** 2);
+      document.getElementById('bmiCalc').value = bmi.toFixed(1);
+      return bmi;
+    }
+    document.getElementById('bmiCalc').value = '';
+    return null;
+  } else {
+    return parseFloat(document.getElementById('bmiDirect').value) || null;
+  }
+}
+
+function linearInterpolate(value, scores, reverse) {
+  if (value === null || value === undefined || isNaN(value)) return null;
+  const sorted = [...scores].sort((a, b) => a.value - b.value);
+
+  const best = reverse ? sorted[0] : sorted[sorted.length - 1];
+  const worst = reverse ? sorted[sorted.length - 1] : sorted[0];
+
+  if (reverse) {
+    if (value <= best.value) return best.score;
+    if (value >= worst.value) return worst.score;
+  } else {
+    if (value >= best.value) return best.score;
+    if (value <= worst.value) return worst.score;
+  }
+
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const a = sorted[i];
+    const b = sorted[i + 1];
+    if (reverse) {
+      if (value >= a.value && value <= b.value) {
+        const ratio = (value - a.value) / (b.value - a.value);
+        return a.score + ratio * (b.score - a.score);
+      }
+    } else {
+      if (value >= a.value && value <= b.value) {
+        const ratio = (value - a.value) / (b.value - a.value);
+        return a.score + ratio * (b.score - a.score);
+      }
+    }
+  }
+  return null;
+}
+
+function calcBmiScore(bmiValue) {
+  if (bmiValue === null) return null;
+  if (!currentGender) return null;
+  const ranges = CONFIG.genders[currentGender].bmi.ranges;
+  for (const r of ranges) {
+    const min = r.min ?? -Infinity;
+    const max = r.max ?? Infinity;
+    if (bmiValue >= min && bmiValue <= max) {
+      return { score: r.score, level: r.level };
+    }
+  }
+  return null;
+}
+
+function calcRopeSkipBonus(value) {
+  if (value === null || !currentGender) return 0;
+  const fullScore = CONFIG.genders[currentGender].items.ropeSkip.scores.find(s => s.score === 100);
+  if (!fullScore) return 0;
+  const extra = value - fullScore.value;
+  if (extra <= 0) return 0;
+  const bonus = Math.floor(extra / CONFIG.bonus.ropeSkip.perCount) * CONFIG.bonus.ropeSkip.perScore;
+  return Math.min(bonus, CONFIG.bonus.ropeSkip.maxBonus);
+}
+
+function formatTime(seconds) {
+  const total = Math.round(seconds);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}'${String(s).padStart(2, '0')}"`;
+}
+
+function calculate() {
+  if (!currentGender || !CONFIG) return;
+  const items = CONFIG.genders[currentGender].items;
+  const weights = CONFIG.weights;
+  const results = [];
+  let totalWeighted = 0;
+  let totalWeight = 0;
+
+  // BMI
+  const bmiValue = getBmiValue();
+  const bmiResult = calcBmiScore(bmiValue);
+  if (bmiResult && bmiValue !== null) {
+    const w = weights.bmi / 100;
+    const weighted = bmiResult.score * w;
+    results.push({
+      key: 'bmi',
+      name: '体重指数（BMI）',
+      unit: '',
+      value: 'BMI ' + bmiValue.toFixed(1),
+      score: bmiResult.score,
+      displayScore: bmiResult.score,
+      bonus: 0,
+      weight: weights.bmi,
+      weighted: weighted,
+      level: bmiResult.level,
+      isBmi: true
+    });
+    totalWeighted += weighted;
+    totalWeight += weights.bmi;
+  } else if (bmiValue !== null) {
+    results.push({
+      key: 'bmi',
+      name: '体重指数（BMI）',
+      unit: '',
+      value: 'BMI ' + bmiValue.toFixed(1),
+      score: null,
+      displayScore: null,
+      bonus: 0,
+      weight: weights.bmi,
+      weighted: null,
+      level: null,
+      isBmi: true
+    });
+  }
+
+  // Other items
+  ITEM_KEYS.forEach(key => {
+    const item = items[key];
+    let value = null;
+    if (key === 'run50x8') {
+      const minEl = document.getElementById('input_run50x8_min');
+      const secEl = document.getElementById('input_run50x8_sec');
+      const minVal = minEl ? parseFloat(minEl.value) : 0;
+      const secVal = secEl ? parseFloat(secEl.value) : null;
+      if (!isNaN(minVal) && secVal !== null && !isNaN(secVal)) {
+        value = minVal * 60 + secVal;
+      } else if (!isNaN(minVal) && (secVal === null || isNaN(secVal))) {
+        value = null;
+      }
+    } else {
+      const inputEl = document.getElementById('input_' + key);
+      const rawValue = inputEl ? parseFloat(inputEl.value) : null;
+      value = isNaN(rawValue) ? null : rawValue;
+    }
+
+    if (value !== null) {
+      let score = linearInterpolate(value, item.scores, item.reverse);
+      if (score !== null) score = Math.round(score * 10) / 10;
+
+      let bonus = 0;
+      if (key === 'ropeSkip') {
+        bonus = calcRopeSkipBonus(value);
+      }
+
+      const displayScore = score !== null ? score + bonus : null;
+      const w = weights[key] / 100;
+      const weighted = displayScore !== null ? displayScore * w : null;
+
+      results.push({
+        key: key,
+        name: item.name,
+        unit: item.unit,
+        value: key === 'run50x8' ? formatTime(value) : value,
+        score: score,
+        bonus: bonus,
+        displayScore: displayScore,
+        weight: weights[key],
+        weighted: weighted,
+        isBmi: false
+      });
+
+      if (weighted !== null) {
+        totalWeighted += weighted;
+      }
+      totalWeight += weights[key];
+    } else {
+      results.push({
+        key: key,
+        name: item.name,
+        unit: item.unit,
+        value: null,
+        score: null,
+        bonus: 0,
+        displayScore: null,
+        weight: weights[key],
+        weighted: null,
+        isBmi: false
+      });
+    }
+  });
+
+  renderResults(results, totalWeighted, totalWeight);
+}
+
+function renderResults(results, totalWeighted, totalWeight) {
+  const section = document.getElementById('resultSection');
+  const hasAny = results.some(r => r.score !== null || r.displayScore !== null);
+  section.classList.toggle('visible', hasAny);
+
+  const totalScore = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : null;
+  const displayTotal = totalScore !== null ? totalScore.toFixed(1) : '—';
+
+  document.getElementById('totalScore').textContent = displayTotal;
+  const totalScoreEl = document.getElementById('totalScore');
+  totalScoreEl.classList.toggle('warn', totalScore !== null && totalScore < 80);
+
+  const totalCard = document.getElementById('totalScoreCard');
+  totalCard.classList.remove('excellent', 'good', 'pass', 'fail');
+  const levelDiv = document.getElementById('totalLevel');
+  levelDiv.innerHTML = '';
+
+  if (totalScore !== null) {
+    let levelClass, levelText;
+    if (totalScore >= 90) { levelClass = 'level-excellent'; levelText = '优秀'; totalCard.classList.add('excellent'); }
+    else if (totalScore >= 80) { levelClass = 'level-good'; levelText = '良好'; totalCard.classList.add('good'); }
+    else if (totalScore >= 60) { levelClass = 'level-pass'; levelText = '及格'; totalCard.classList.add('pass'); }
+    else { levelClass = 'level-fail'; levelText = '不及格'; totalCard.classList.add('fail'); }
+    levelDiv.innerHTML = `<span class="total-score-level ${levelClass}">${levelText}</span>`;
+  }
+
+  // Detail table
+  const tbody = document.getElementById('detailBody');
+  tbody.innerHTML = results.map((r, i) => {
+    const color = r.isBmi ? '#6366f1' : ITEM_COLORS[r.key === 'bmi' ? 0 : ITEM_KEYS.indexOf(r.key)];
+    const dot = `<span class="dot" style="background:${color};"></span>`;
+    const valDisplay = r.value != null ? r.value : '<span class="missing">未输入</span>';
+    const scoreDisplay = r.displayScore != null ? r.displayScore.toFixed(1) : (r.score != null ? r.score.toFixed(1) : '<span class="missing">—</span>');
+    const weightedDisplay = r.weighted != null ? r.weighted.toFixed(1) : '<span class="missing">—</span>';
+    const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${r.bonus}</span>` : '';
+    const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${r.level}</span>` : '';
+    const actualScore = r.displayScore != null ? r.displayScore : r.score;
+    const scoreWarn = actualScore != null && actualScore < 80 ? ' warn' : '';
+
+    return `<tr${scoreWarn ? ' class="row-warn"' : ''}>
+      <td><span class="item-name">${dot}${r.name}</span>${levelBadge}</td>
+      <td>${valDisplay} <span class="item-unit">${r.unit}</span></td>
+      <td><span class="score-val${scoreWarn}">${scoreDisplay}</span>${bonusHtml}</td>
+      <td>${r.weight}%</td>
+      <td><span class="weighted-val">${weightedDisplay}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('footerWeight').textContent = totalWeight + '%';
+  document.getElementById('footerTotal').textContent = displayTotal;
+}
+
+init();
+</script>
+</body>
+</html>
