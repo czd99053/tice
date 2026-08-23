@@ -498,7 +498,7 @@ const ITEM_IDS = {
 
 const ITEM_COLORS = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444'];
 
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escHtml(s) { var d = document.createElement('span'); d.textContent = String(s); return d.innerHTML; }
 
 async function init() {
   try {
