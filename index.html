@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self';">
 <title>长春市六年级体能测试评分系统</title>
 <style>
 :root {
@@ -497,6 +498,8 @@ const ITEM_IDS = {
 
 const ITEM_COLORS = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444'];
 
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
 async function init() {
   try {
     const res = await fetch('config.json');
@@ -516,8 +519,8 @@ function buildItemInputs() {
     html += `<div class="card">
       <div class="card-header">
         <div class="card-icon" style="background:${color}18;color:${color};">${i+1}</div>
-        <div class="card-title">${item.name}<span style="font-size:12px;color:var(--text-muted);font-weight:400;"> — 权重 ${weight}%</span></div>
-        <div class="card-desc">${item.unit}</div>
+        <div class="card-title">${escHtml(item.name)}<span style="font-size:12px;color:var(--text-muted);font-weight:400;"> — 权重 ${weight}%</span></div>
+        <div class="card-desc">${escHtml(item.unit)}</div>
       </div>
       ${key === 'run50x8' ? `
       <div class="input-group" style="flex-direction:row;align-items:center;gap:8px;">
@@ -526,11 +529,11 @@ function buildItemInputs() {
         <input type="number" id="input_run50x8_sec" placeholder="秒" step="0.1" oninput="calculate()" style="flex:1;">
         <span style="color:var(--text-muted);font-size:14px;">秒</span>
       </div>
-      <span class="unit" style="margin-top:4px;">单位：${item.unit}（越小越好）</span>
+      <span class="unit" style="margin-top:4px;">单位：${escHtml(item.unit)}（越小越好）</span>
       ` : `
       <div class="input-group">
-        <input type="number" id="input_${key}" placeholder="输入${item.name}成绩" step="0.1" oninput="calculate()">
-        <span class="unit">单位：${item.unit}${item.reverse ? '（越小越好）' : '（越大越好）'}</span>
+        <input type="number" id="input_${key}" placeholder="输入${escHtml(item.name)}成绩" step="0.1" oninput="calculate()">
+        <span class="unit">单位：${escHtml(item.unit)}${item.reverse ? '（越小越好）' : '（越大越好）'}</span>
       </div>
       `}
     </div>`;
@@ -806,7 +809,7 @@ function renderResults(results, totalWeighted, totalWeight) {
     const weightedDisplay = r.weighted != null ? (weightedRaw + r.bonus).toFixed(1) : '<span class="missing">—</span>';
     const bonusRaw = r.bonus > 0 ? r.bonus * 10 : 0;
     const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${bonusRaw.toFixed(0)}</span>` : '';
-    const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${r.level}</span>` : '';
+    const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${escHtml(r.level)}</span>` : '';
     const actualScore = r.score != null ? r.score : r.displayScore;
     const scoreWarn = actualScore != null && actualScore < 80 ? ' warn' : '';
 
