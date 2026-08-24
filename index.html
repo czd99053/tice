@@ -795,7 +795,7 @@ function renderResults(results, totalWeighted, totalWeight) {
   const displayTotal = totalScore !== null ? totalScore.toFixed(1) : '—';
   const ratio = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : null;
 
-  const tenScoreTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(1) : '—';
+  const tenScoreTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(2) : '—';
   document.getElementById('tenScoreBig').textContent = tenScoreTotal;
   const tenScoreEl = document.getElementById('tenScoreBig');
   tenScoreEl.classList.toggle('warn', ratio !== null && ratio < 80);
@@ -840,7 +840,7 @@ function renderResults(results, totalWeighted, totalWeight) {
 
   document.getElementById('footerWeight').textContent = totalWeight + '%';
   document.getElementById('footerTotal').textContent = displayTotal;
-  const tenTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(1) : '—';
+  const tenTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(2) : '—';
   document.getElementById('footerTen').textContent = tenTotal;
 }
 
