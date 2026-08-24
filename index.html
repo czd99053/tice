@@ -822,7 +822,7 @@ function renderResults(results, totalWeighted, totalWeight) {
     const valDisplay = r.value != null ? r.value : '<span class="missing">未输入</span>';
     const scoreDisplay = r.displayScore != null ? r.displayScore.toFixed(1) : (r.score != null ? r.score.toFixed(1) : '<span class="missing">—</span>');
     const weightedDisplay = r.weighted != null ? r.weighted.toFixed(1) : '<span class="missing">—</span>';
-    const tenDisplay = r.weighted != null ? Math.min(r.weighted * 0.1, 8).toFixed(1) : '<span class="missing">—</span>';
+    const tenDisplay = r.weighted != null ? Math.min(r.weighted * 0.1, 8).toFixed(2) : '<span class="missing">—</span>';
     const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${r.bonus}</span>` : '';
     const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${escHtml(r.level)}</span>` : '';
     const actualScore = r.score != null ? r.score : r.displayScore;
