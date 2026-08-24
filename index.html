@@ -415,11 +415,11 @@ body {
     <div class="input-grid" id="bmiCalcInputs">
       <div class="input-group">
         <label>身高 <span class="unit">（厘米）</span></label>
-        <input type="number" id="height" placeholder="如 150" step="0.1" oninput="calculate()">
+        <input type="number" id="height" placeholder="如 150" step="0.1" min="0" oninput="calculate()">
       </div>
       <div class="input-group">
         <label>体重 <span class="unit">（千克）</span></label>
-        <input type="number" id="weight" placeholder="如 40" step="0.1" oninput="calculate()">
+        <input type="number" id="weight" placeholder="如 40" step="0.1" min="0" oninput="calculate()">
       </div>
       <div class="input-group">
         <label>BMI 值 <span class="unit">（自动计算）</span></label>
@@ -429,7 +429,7 @@ body {
     <div class="input-grid" id="bmiDirectInput" style="display:none">
       <div class="input-group">
         <label>BMI 值</label>
-        <input type="number" id="bmiDirect" placeholder="如 18.5" step="0.1" oninput="calculate()">
+        <input type="number" id="bmiDirect" placeholder="如 18.5" step="0.1" min="0" oninput="calculate()">
       </div>
     </div>
   </div>
@@ -526,15 +526,15 @@ function buildItemInputs() {
       </div>
       ${key === 'run50x8' ? `
       <div class="input-group" style="flex-direction:row;align-items:center;gap:8px;">
-        <input type="number" id="input_run50x8_min" placeholder="分" step="1" value="1" oninput="calculate()" style="width:80px;">
+        <input type="number" id="input_run50x8_min" placeholder="分" step="1" value="1" min="0" oninput="calculate()" style="width:80px;">
         <span style="color:var(--text-muted);font-size:14px;">分</span>
-        <input type="number" id="input_run50x8_sec" placeholder="秒" step="1" oninput="calculate()" style="flex:1;">
+        <input type="number" id="input_run50x8_sec" placeholder="秒" step="1" min="0" oninput="calculate()" style="flex:1;">
         <span style="color:var(--text-muted);font-size:14px;">秒</span>
       </div>
       <span class="unit" style="margin-top:4px;">单位：${escHtml(item.unit)}（越小越好）</span>
       ` : `
       <div class="input-group">
-        <input type="number" id="input_${key}" placeholder="输入${escHtml(item.name)}成绩" step="${key === 'ropeSkip' || key === 'sitUp' ? '1' : '0.1'}" oninput="calculate()">
+        <input type="number" id="input_${key}" placeholder="输入${escHtml(item.name)}成绩" step="${key === 'ropeSkip' || key === 'sitUp' || key === 'vitalCapacity' ? '1' : '0.1'}"${key === 'sitAndReach' ? '' : ' min="0"'} oninput="calculate()">
         <span class="unit">单位：${escHtml(item.unit)}${item.reverse ? '（越小越好）' : '（越大越好）'}</span>
       </div>
       `}
