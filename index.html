@@ -441,6 +441,8 @@ body {
       <div class="total-score-label">加权总分</div>
       <div class="total-score-value" id="totalScore">—</div>
       <div style="font-size:13px;color:var(--text-muted);" id="scoreHint">满分 100 分</div>
+      <div style="font-size:20px;font-weight:700;color:var(--primary);margin-top:4px;" id="tenScoreBig">—</div>
+      <div style="font-size:11px;color:var(--text-muted);">10分制得分（8分满分）</div>
       <div id="totalLevel"></div>
     </div>
 
@@ -458,6 +460,7 @@ body {
               <th>单项得分</th>
               <th>权重</th>
               <th>加权得分</th>
+              <th>10分制得分</th>
             </tr>
           </thead>
           <tbody id="detailBody"></tbody>
@@ -468,6 +471,7 @@ body {
               <td></td>
               <td id="footerWeight">—</td>
               <td id="footerTotal">—</td>
+              <td id="footerTen">—</td>
             </tr>
           </tfoot>
         </table>
@@ -780,6 +784,8 @@ function renderResults(results, totalWeighted, totalWeight) {
   const ratio = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : null;
 
   document.getElementById('totalScore').textContent = displayTotal;
+  const tenScoreTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(1) : '—';
+  document.getElementById('tenScoreBig').textContent = tenScoreTotal + ' 分';
   const hintEl = document.getElementById('scoreHint');
   hintEl.textContent = totalWeight === 100 ? '满分 100 分' : '已计算权重 ' + totalWeight + '%';
   const totalScoreEl = document.getElementById('totalScore');
@@ -807,6 +813,7 @@ function renderResults(results, totalWeighted, totalWeight) {
     const valDisplay = r.value != null ? r.value : '<span class="missing">未输入</span>';
     const scoreDisplay = r.displayScore != null ? r.displayScore.toFixed(1) : (r.score != null ? r.score.toFixed(1) : '<span class="missing">—</span>');
     const weightedDisplay = r.weighted != null ? r.weighted.toFixed(1) : '<span class="missing">—</span>';
+    const tenDisplay = r.weighted != null ? Math.min(r.weighted * 0.1, 8).toFixed(1) : '<span class="missing">—</span>';
     const bonusHtml = r.bonus > 0 ? `<span class="bonus-badge">+${r.bonus}</span>` : '';
     const levelBadge = r.level ? `<span style="font-size:11px;color:var(--text-muted);">${escHtml(r.level)}</span>` : '';
     const actualScore = r.score != null ? r.score : r.displayScore;
@@ -818,11 +825,14 @@ function renderResults(results, totalWeighted, totalWeight) {
       <td><span class="score-val${scoreWarn}">${scoreDisplay}</span>${bonusHtml}</td>
       <td>${r.weight}%</td>
       <td><span class="weighted-val">${weightedDisplay}</span></td>
+      <td><span class="weighted-val">${tenDisplay}</span></td>
     </tr>`;
   }).join('');
 
   document.getElementById('footerWeight').textContent = totalWeight + '%';
   document.getElementById('footerTotal').textContent = displayTotal;
+  const tenTotal = totalWeight > 0 ? Math.min(totalWeighted * 0.1, 8).toFixed(1) : '—';
+  document.getElementById('footerTen').textContent = tenTotal;
 }
 
 init();
